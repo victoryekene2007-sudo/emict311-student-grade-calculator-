@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Grade Calculator - EMCICT311</title>
+<style>
+  body { 
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    background: #f0f4f8; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+  .container { 
+    background: #fff; 
+    padding: 30px; 
+    border-radius: 12px; 
+    width: 420px; 
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1); 
+  }
+  h2 { 
+    text-align: center; 
+    color: #2c3e50; 
+    margin-bottom: 20px; 
+  }
+  label { 
+    font-weight: 600; 
+    display: block; 
+    margin-top: 12px; 
+    color: #333; 
+  }
+  input { 
+    width: 100%; 
+    padding: 10px; 
+    margin: 6px 0 12px; 
+    border: 1px border-box;
+  }
+  button { 
+    width: 100%; 
+    padding: 12px; 
+    background: #2c3e50; 
+    color: white; 
+    border: none; 
+    border-radius: 6px; 
+    font-size: 16px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    margin-top: 8px;
+  }
+  button:hover { 
+    background: #1a252f; 
+  }
+  .result { 
+    margin-top: 20px; 
+    padding: 15px; 
+    background: #ecf0f1; 
+    border-radius: 8px; 
+    display: none;
+  }
+  .pass { color: #27ae60; font-weight: bold; } 
+  .fail { color: #c0392b; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Student Grade Calculator</h2>
+  
+  <label>Student Name</label>
+  <input type="text" id="name" placeholder="Enter student name">
+  
+  <label>Assessment Score 1</label>
+  <input type="number" id="s1" min="0" max="100" placeholder="0 - 100">
+  
+  <label>Assessment Score 2</label>
+  <input type="number" id="s2" min="0" max="100" placeholder="0 - 100">
+  
+  <label>Assessment Score 3</label>
+  <input type="number" id="s3" min="0" max="100" placeholder="0 - 100">
+  
+  <button onclick="calculate()">Calculate Grade</button>
+  
+  <div id="resultBox" class="result"></div>
+</div>
+
+<script>
+function getGrade(average){
+  if(average >= 70) return "A";
+  if(average >= 60) return "B";
+  if(average >= 50) return "C";
+  if(average >= 45) return "D";
+  if(average >= 40) return "E";
+  return "F";
+}
+
+function calculate(){
+  let name = document.getElementById("name").value.trim();
+  let s1 = parseFloat(document.getElementById("s1").value);
+  let s2 = parseFloat(document.getElementById("s2").value);
+  let s3 = parseFloat(document.getElementById("s3").value);
+  
+  if(name === ""){
+    alert("Please enter student name");
+    return;
+  }
+  if(isNaN(s1) || isNaN(s2) || isNaN(s3)){
+    alert("Please enter all 3 scores");
+    return;
+  }
+  if(s1 < 0 || s1 > 100 || s2 < 0 || s2 > 100 || s3 < 0 || s3 > 100){
+    alert("Scores must be between 0 and 100");
+    return;
+  }
+  
+  let total = s1 + s2 + s3;        
+  let average = total / 3;         
+  let grade = getGrade(average);   
+  let status = average >= 40 ? "PASS" : "FAIL";
+  
+  document.getElementById("resultBox").style.display = "block";
+  document.getElementById("resultBox").innerHTML = `
+    <h3>Result for: ${name}</h3>
+    <p><b>Scores:</b> ${s1}, ${s2}, ${s3}</p>
+    <p><b>Total Score:</b> ${total}</p>
+    <p><b>Average Score:</b> ${average.toFixed(2)}</p>
+    <p><b>Grade:</b> ${grade}</p>
+    <p><b>Status:</b> <span class="${status.toLowerCase()}">${status}</span></p>
+  `;
+}
+</script>
+</body>
+</html>
