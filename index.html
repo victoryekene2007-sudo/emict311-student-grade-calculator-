@@ -7,13 +7,15 @@
 <style>
     *{box-sizing:border-box;font-family:Arial, sans-serif}
     body{max-width:900px;margin:20px auto;padding:20px;background:#f5f5f5}
+    .header{text-align:center;background:#4CAF50;color:white;padding:15px;border-radius:10px;margin-bottom:20px}
+    .header h1{margin:5px 0}
+    .header p{margin:3px 0;font-size:14px}
     .card{background:white;padding:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:20px}
     input,button{padding:10px;margin:5px;border:1px solid #ddd;border-radius:5px}
     input{width:100%}
     button{background:#4CAF50;color:white;border:none;cursor:pointer;font-weight:bold}
     button:hover{background:#45a049}
     button.delete{background:#f44336}
-    button.delete:hover{background:#da190b}
     table{width:100%;border-collapse:collapse;margin-top:15px}
     th,td{padding:10px;border:1px solid #ddd;text-align:left}
     th{background:#4CAF50;color:white}
@@ -22,12 +24,16 @@
 </style>
 </head>
 <body>
-<h1>Student Grade Calculator</h1>
+
+<div class="header">
+    <h1>Student Grade Calculator</h1>
+    <p><b>Course:</b> EMCT311 | <b>Name:</b> ONYEAKA VICTORY EKENE | <b>Matric:</b> 2023030211276</p>
+</div>
 
 <div class="card">
     <h3>Add New Student</h3>
-    <input type="text" id="name" placeholder="1. Student Name" required>
-    <input type="number" id="score1" placeholder="2. Assessment Score 1" min="0" max="100">
+    <input type="text" id="name" placeholder="Student Name" required>
+    <input type="number" id="score1" placeholder="Assessment Score 1" min="0" max="100">
     <input type="number" id="score2" placeholder="Assessment Score 2" min="0" max="100">
     <input type="number" id="score3" placeholder="Assessment Score 3" min="0" max="100">
     <button onclick="addStudent()">Calculate & Save</button>
@@ -47,77 +53,32 @@
 
 <script>
 let students = JSON.parse(localStorage.getItem('students')) || [];
-
 function addStudent(){
     const name = document.getElementById('name').value.trim();
     const s1 = parseFloat(document.getElementById('score1').value) || 0;
     const s2 = parseFloat(document.getElementById('score2').value) || 0;
     const s3 = parseFloat(document.getElementById('score3').value) || 0;
-    
     if(!name){alert("Please enter student name"); return;}
-    
-    // 3. Total 4. Average
     const total = s1 + s2 + s3;
     const average = total / 3;
-    
-    // 5. Grade A-F
     let grade = 'F';
     if(average >= 70) grade = 'A';
     else if(average >= 60) grade = 'B';
     else if(average >= 50) grade = 'C';
     else if(average >= 45) grade = 'D';
     else if(average >= 40) grade = 'E';
-    
-    // 6. Pass/Fail - Pass if C and above
     const status = (grade === 'A' || grade === 'B' || grade === 'C') ? 'Pass' : 'Fail';
-    
     const student = {id: Date.now(), name, scores:`${s1}, ${s2}, ${s3}`, total, average:average.toFixed(2), grade, status};
-    students.push(student);
-    saveAndDisplay();
-    
-    // clear inputs
-    document.getElementById('name').value='';
-    document.getElementById('score1').value='';
-    document.getElementById('score2').value='';
-    document.getElementById('score3').value='';
+    students.push(student); saveAndDisplay();
+    document.getElementById('name').value='';document.getElementById('score1').value='';document.getElementById('score2').value='';document.getElementById('score3').value='';
 }
-
-function deleteStudent(id){
-    if(confirm("Delete this student?")){
-        students = students.filter(s => s.id !== id);
-        saveAndDisplay();
-    }
-}
-
-function saveAndDisplay(){
-    // 9. Local Storage
-    localStorage.setItem('students', JSON.stringify(students));
-    displayStudents();
-}
-
+function deleteStudent(id){if(confirm("Delete this student?")){students = students.filter(s => s.id !== id);saveAndDisplay();}}
+function saveAndDisplay(){localStorage.setItem('students', JSON.stringify(students));displayStudents();}
 function displayStudents(){
-    // 7. Display all records
-    const tbody = document.querySelector('#studentTable tbody');
-    tbody.innerHTML = '';
-    if(students.length === 0){
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">No records yet. Add a student above.</td></tr>';
-        return;
-    }
-    students.forEach(s => {
-        tbody.innerHTML += `
-        <tr>
-            <td>${s.name}</td>
-            <td>${s.scores}</td>
-            <td>${s.total}</td>
-            <td>${s.average}</td>
-            <td>${s.grade}</td>
-            <td class="${s.status.toLowerCase()}">${s.status}</td>
-            <td><button class="delete" onclick="deleteStudent(${s.id})">Delete</button></td>
-        </tr>`;
-    });
+    const tbody = document.querySelector('#studentTable tbody');tbody.innerHTML = '';
+    if(students.length === 0){tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">No records yet. Add a student above.</td></tr>';return;}
+    students.forEach(s => {tbody.innerHTML += `<tr><td>${s.name}</td><td>${s.scores}</td><td>${s.total}</td><td>${s.average}</td><td>${s.grade}</td><td class="${s.status.toLowerCase()}">${s.status}</td><td><button class="delete" onclick="deleteStudent(${s.id})">Delete</button></td></tr>`;});
 }
-
-// load on start
 displayStudents();
 </script>
 </body>
