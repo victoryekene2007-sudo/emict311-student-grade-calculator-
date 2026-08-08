@@ -83,3 +83,34 @@ displayStudents();
 </script>
 </body>
 </html>
+function calculateGrade() {
+    // assuming you get mark like this
+    let mark = parseFloat(document.getElementById("mark").value);
+    
+    // 1. INPUT VALIDATION
+    if(isNaN(mark)) {
+        alert("Error: Please enter a valid number");
+        return; // stop the function
+    }
+    
+    if(mark < 0 || mark > 100) {
+        alert("Error: Marks must be between 0 and 100");
+        return; // stop the function
+    }
+
+    // 2. GRADE ASSIGNMENT - your existing code
+    let grade;
+    if(mark >= 90) {
+        grade = "Excellent";
+    } else if(mark >= 80) {
+        grade = "Very Good";
+    } else if(mark >= 70) {
+        grade = "Good";
+    } else if(mark >= 50) {
+        grade = "Pass";
+    } else {
+        grade = "Fail";
+    }
+
+    // 3. Then continue with your calculation and display
+}
