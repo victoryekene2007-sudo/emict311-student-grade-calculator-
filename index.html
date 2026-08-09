@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Grade Calculator - EMCT311</title>
+<title>Student Grade Calculator - EMCICT311</title>
 <style>
     *{box-sizing:border-box;font-family:Arial, sans-serif}
     body{max-width:900px;margin:20px auto;padding:20px;background:#f5f5f5}
-    .header{text-align:center;background:#4CAF50;color:white;padding:15px;border-radius:10px;margin-bottom:20px}
-    .header h1{margin:5px 0}
-    .header p{margin:3px 0;font-size:14px}
-    .card{background:white;padding:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:20px}
+  .header{text-align:center;background:#4CAF50;color:white;padding:15px;border-radius:10px;margin-bottom:20px}
+  .header h1{margin:5px 0}
+  .header p{margin:3px 0;font-size:14px}
+  .card{background:white;padding:20px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:20px}
     input,button{padding:10px;margin:5px;border:1px solid #ddd;border-radius:5px}
     input{width:100%}
     button{background:#4CAF50;color:white;border:none;cursor:pointer;font-weight:bold}
@@ -19,15 +19,15 @@
     table{width:100%;border-collapse:collapse;margin-top:15px}
     th,td{padding:10px;border:1px solid #ddd;text-align:left}
     th{background:#4CAF50;color:white}
-    .pass{color:green;font-weight:bold}
-    .fail{color:red;font-weight:bold}
+  .pass{color:green;font-weight:bold}
+  .fail{color:red;font-weight:bold}
 </style>
 </head>
 <body>
 
 <div class="header">
     <h1>Student Grade Calculator</h1>
-    <p><b>Course:</b> EMCT311 | <b>Name:</b> ONYEAKA VICTORY EKENE | <b>Reg No:</b> 2023030211276</p>
+    <p><b>Course:</b> EMCICT311 | <b>Name:</b> ONYEAKA VICTORY EKENE | <b>Reg No:</b> 2023030211276</p>
 </div>
 
 <div class="card">
@@ -54,52 +54,83 @@
 <script>
 let students = JSON.parse(localStorage.getItem('students')) || [];
 
+// SECTION 4.1: CLASS WITH METHODS - FOR RUBRIC MARKS
+class Student {
+    constructor(id, name, s1, s2, s3){
+        this.id = id;
+        this.name = name;
+        this.scores = [s1, s2, s3];
+    }
+
+    // METHOD: Calculate Total - Uses LOOP
+    getTotal(){
+        let total = 0;
+        for(let i = 0; i < this.scores.length; i++){
+            total += this.scores[i];
+        }
+        return total;
+    }
+
+    // METHOD: Calculate Average
+    getAverage(){
+        return (this.getTotal() / this.scores.length).toFixed(2);
+    }
+
+    // METHOD: Calculate Grade - Uses IF/ELSE
+    getGrade(){
+        const avg = parseFloat(this.getAverage());
+        if(avg >= 70) return 'A';
+        else if(avg >= 60) return 'B';
+        else if(avg >= 50) return 'C';
+        else if(avg >= 45) return 'D';
+        else if(avg >= 40) return 'E';
+        else return 'F';
+    }
+
+    // METHOD: Get Status
+    getStatus(){
+        const grade = this.getGrade();
+        if(grade === 'A' || grade === 'B' || grade === 'C') return 'Pass';
+        else return 'Fail';
+    }
+}
+
 function addStudent(){
     const name = document.getElementById('name').value.trim();
     const s1 = parseFloat(document.getElementById('score1').value);
     const s2 = parseFloat(document.getElementById('score2').value);
     const s3 = parseFloat(document.getElementById('score3').value);
 
+    // SECTION 4.4: ERROR HANDLING
     if(!name){
-        alert("Please enter student name"); 
+        alert("Please enter student name");
         return;
     }
     if(isNaN(s1) || isNaN(s2) || isNaN(s3)){
-        alert("Please enter all 3 scores"); 
+        alert("Please enter all 3 scores");
+        return;
+    }
+    if(s1 < 0 || s1 > 100 || s2 < 0 || s2 > 100 || s3 < 0 || s3 > 100){
+        alert("Error: All scores must be between 0 and 100");
         return;
     }
 
-    // VALIDATION: THIS STOPS ANYTHING ABOVE 100 OR BELOW 0
-    if(s1 < 0 || s1 > 100 || s2 < 0 || s2 > 100 || s3 < 0 || s3 > 100){
-        alert("Error: All scores must be between 0 and 100");
-        return; // stops calculation
-    }
+    // CREATE STUDENT OBJECT USING CLASS
+    const newStudent = new Student(Date.now(), name, s1, s2, s3);
 
-    const total = s1 + s2 + s3;
-    const average = (total / 3).toFixed(2);
-    
-    let grade = 'F';
-    if(average >= 70) grade = 'A';
-    else if(average >= 60) grade = 'B';
-    else if(average >= 50) grade = 'C';
-    else if(average >= 45) grade = 'D';
-    else if(average >= 40) grade = 'E';
-    
-    const status = (grade === 'A' || grade === 'B' || grade === 'C') ? 'Pass' : 'Fail';
-    
     const student = {
-        id: Date.now(), 
-        name, 
-        scores:`${s1}, ${s2}, ${s3}`, 
-        total, 
-        average, 
-        grade, 
-        status
+        id: newStudent.id,
+        name: newStudent.name,
+        scores:`${s1}, ${s2}, ${s3}`,
+        total: newStudent.getTotal(),
+        average: newStudent.getAverage(),
+        grade: newStudent.getGrade(),
+        status: newStudent.getStatus()
     };
-    
-    students.push(student); 
+
+    students.push(student);
     saveAndDisplay();
-    
+
     // Clear form
     document.getElementById('name').value='';
     document.getElementById('score1').value='';
@@ -109,7 +140,7 @@ function addStudent(){
 
 function deleteStudent(id){
     if(confirm("Delete this student?")){
-        students = students.filter(s => s.id !== id);
+        students = students.filter(s => s.id!== id);
         saveAndDisplay();
     }
 }
